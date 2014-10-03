@@ -2,6 +2,7 @@ import std.c.stdlib;
 import std.stdio;
 
 import clone;
+import rerere;
 
 void main(string[] args)
 {
@@ -17,6 +18,10 @@ void main(string[] args)
 	switch(args[1]) {
 		case "clone":
 			cloneBPF(args);
+			break;
+
+		case "share-rerere":
+			syncRerere();
 			break;
 
 		default:
@@ -42,7 +47,10 @@ Usage: bmpt [subcommand]
 Subcommands:
 
   clone
-    Clone a repository and set up BPF
+    Clone a repository and set up BPF.
+
+  share-rerere
+    Synchronize (via a pull then a push) the shared rerere cache.
 EOS";
 
 private string versionText = q"EOS

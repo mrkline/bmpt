@@ -2,6 +2,8 @@ import std.stdio;
 import std.conv;
 import std.file;
 import std.process;
+import std.exception;
+import std.algorithm;
 
 import processutils;
 import git;
@@ -51,4 +53,59 @@ void setupRerere(string remoteURL, string remote = "origin")
 			"Automatically creating branch to track conflict resolutions"]);
 		run(["git", "push", remote, "rr-cache", "-u"]);
 	}
+}
+
+void enforceRerereSetup()
+{
+	enforceInRepo();
+	string rrGitDir = getRepoRoot() ~ "/.git/rr-cache/.git";
+	enforce(exists(rrGitDir) && isDir(rrGitDir),
+		"The shared rerere cache has not been set up.");
+}
+
+void pullRerere()
+{
+	enforceRerereSetup();
+	string rrPath = getRepoRoot() ~ "/.git/rr-cache";
+	string cwd = getcwd();
+	chdir(rrPath);
+	scope(exit) chdir(cwd);
+	writeln("Pulling the latest conflict resolutions...");
+	run(["git", "pull"]);
+}
+
+void pushRerere()
+{
+	import std.regex;
+
+	enforceRerereSetup();
+	string rrPath = getRepoRoot() ~ "/.git/rr-cache";
+	string cwd = getcwd();
+	chdir(rrPath);
+	scope(exit) chdir(cwd);
+	writeln("Pushing your latest conflict resolutions...");
+
+	// TODO: This follows what the ruby git_bpf gem does,
+	//       but maybe a "git add ." would be simpler.
+	enum newResolutionRegex = ctRegex!(`\?\?\s(\w+)`);
+
+	auto newResolutions = run(["git", "status", "--porcelain"])
+		.byLine
+		.map!(s => s.matchFirst(newResolutionRegex))
+		.filter!(m => m.to!bool) // Regex matches are converible to booleans if found
+		.map!(m => m[1]); // The first match is the directory of the resolution
+
+	foreach (r; newResolutions) {
+		writeln("Sharing resolution ", r, "...");
+		run(["git", "add", r.to!string]);
+		run(["git", "commit", "-m", "Sharing resolution " ~ r.to!string]);
+	}
+	writeln("Pushing resolutions...");
+	run(["git", "push"]);
+}
+
+void syncRerere()
+{
+	pullRerere();
+	pushRerere();
 }
