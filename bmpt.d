@@ -1,7 +1,6 @@
 import std.c.stdlib;
 import std.stdio;
 
-import init;
 import clone;
 
 void main(string[] args)
@@ -16,10 +15,6 @@ void main(string[] args)
 		writeHelp();
 
 	switch(args[1]) {
-		case "init":
-			initBPF(args);
-			break;
-
 		case "clone":
 			cloneBPF(args);
 			break;
@@ -45,9 +40,6 @@ private string helpText = q"EOS
 Usage: bmpt [subcommand]
 
 Subcommands:
-
-  init
-    Initialize the current repository as a BPF repo
 
   clone
     Clone a repository and set up BPF
