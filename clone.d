@@ -33,13 +33,12 @@ void cloneBPF(string[] args)
 	string clonedDir = cloneRepo(cloneArgs);
 	chdir(clonedDir);
 	setupRerere(args[0], remote);
-	exit(0);
 }
 
 void writeHelp()
 {
 	writeln(helpText);
-	exit(0);
+	exit(1);
 }
 
 private string helpText = q"EOS
