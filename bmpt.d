@@ -3,6 +3,7 @@ import std.stdio;
 
 import clone;
 import rerere;
+import whoami;
 
 void main(string[] args)
 {
@@ -22,6 +23,10 @@ void main(string[] args)
 
 		case "share-rerere":
 			syncRerere();
+			break;
+
+		case "whoami":
+			writeWhoami();
 			break;
 
 		default:
@@ -51,6 +56,9 @@ Subcommands:
 
   share-rerere
     Synchronize (via a pull then a push) the shared rerere cache.
+
+  whoami
+    Print some basic information about your Pivotal Tracker account
 EOS";
 
 private string versionText = q"EOS

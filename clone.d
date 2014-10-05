@@ -46,6 +46,9 @@ Usage: bmpt clone [-o <name>] <remote URL> [<directory>]
 
 Options:
 
+  --help, -h
+    Display this help text.
+
   --origin, -o <name>
     Specify the remote name. Defaults to "origin", just like Git normally does.
 
