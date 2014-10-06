@@ -7,6 +7,8 @@ import std.typecons;
 
 enum stderrToStdout = Redirect.stdout | Redirect.stderrToStdout;
 
+enum noRedirect = cast(Redirect)0;
+
 File runTemplate(alias runWith, S)(S command, Redirect flags)
 	if (is(S == string) || is(S == string[]))
 {
@@ -22,20 +24,31 @@ File runTemplate(alias runWith, S)(S command, Redirect flags)
 		else {
 			commandAsString = command.join(" ");
 		}
-		// Take stderr by line (as this is a convenient way to get its string value)
-		// and join those lines together
-		string stderr = pipes.stderr.byLine(KeepTerminator.yes).join().strip().idup;
+
 		string exceptionMessage = commandAsString ~ " failed. ";
-		if ((flags & Redirect.stderrToStdout) == Redirect.stderrToStdout)
+
+		if ((flags & Redirect.stderrToStdout) == Redirect.stderrToStdout) {
 			exceptionMessage ~= "Stderr was redirected to stdout.";
-		else if (stderr.length > 0)
-			exceptionMessage ~= "Stderr was empty.";
-		else
-			exceptionMessage ~= "Stderr contained:\n" ~ stderr;
+		}
+		else if ((flags & Redirect.stderr) != cast(Redirect)0) {
+			// Add no message about stderr (stderr was not redirected)
+		}
+		else {
+			// Take stderr by line (as this is a convenient way to get its string value)
+			// and join those lines together
+			string stderr = pipes.stderr.byLine(KeepTerminator.yes).join().strip().idup;
+			if (stderr.length > 0)
+				exceptionMessage ~= "Stderr was empty.";
+			else
+				exceptionMessage ~= "Stderr contained:\n" ~ stderr;
+		}
 
 		throw new ProcessException(exceptionMessage);
 	}
-	return pipes.stdout;
+	if ((flags & Redirect.stdout) == cast(Redirect)0)
+		return File.init;
+	else
+		return pipes.stdout;
 }
 
 auto run(S)(S command, Redirect flags = Redirect.stderr | Redirect.stdout)

@@ -4,6 +4,7 @@ import std.stdio;
 import clone;
 import rerere;
 import whoami;
+import start;
 
 void main(string[] args)
 {
@@ -27,6 +28,10 @@ void main(string[] args)
 
 		case "whoami":
 			writeWhoami();
+			break;
+
+		case "start":
+			startStory(args);
 			break;
 
 		default:
@@ -59,6 +64,9 @@ Subcommands:
 
   whoami
     Print some basic information about your Pivotal Tracker account
+
+  start
+    Creates a branch for a given PT story, or checks out the existing one
 EOS";
 
 private string versionText = q"EOS

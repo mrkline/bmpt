@@ -48,9 +48,9 @@ void setConfig(string option, string value)
 	run(["git", "config", option, value]);
 }
 
-string getRemote(string option)
+string getRemote()
 {
-	auto output = run(option).byLine;
+	auto output = run(["git", "remote"]).byLine;
 	if (output.empty)
 		return "";
 

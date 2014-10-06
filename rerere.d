@@ -27,8 +27,6 @@ void setupRerere(string remoteURL, string remote = "origin")
 		chdir(rrPath);
 		scope(exit) chdir(cwd);
 		run(["git", "remote", "add", remote, remoteURL]);
-		writeln("  Fetching repo for the shared rerere cache...");
-		run(["git", "fetch", remote]);
 	}
 	else {
 		writeln("  Rerere cache already exists and is a repository.");
@@ -46,7 +44,7 @@ void setupRerere(string remoteURL, string remote = "origin")
 	}
 	// Otherwise create an orphan branch and push it up
 	else {
-		writeln("  Creating and pushing new rerere cache branch to " ~ remote);
+		writeln("  Creating and pushing new rerere cache branch to " ~ remote ~ "...");
 		run(["git", "checkout", "--orphan", "rr-cache"]);
 		run(["git", "rm", "-rf", "--ignore-unmatch", rrPath]);
 		run(["git", "commit", "-a", "--allow-empty", "-m",

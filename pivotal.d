@@ -1,5 +1,6 @@
 import std.json;
 import std.net.curl;
+import std.stdio;
 
 private immutable string APIURL = "https://www.pivotaltracker.com/services/v5/";
 
@@ -8,6 +9,15 @@ JSONValue get(string token, string endpoint)
 	auto client = HTTP();
 	client.addRequestHeader("X-TrackerToken", token);
 	return parseJSON(std.net.curl.get(APIURL ~ endpoint, client));
+}
+
+void put(string token, string endpoint, JSONValue val)
+{
+	auto client = HTTP();
+	client.addRequestHeader("X-TrackerToken", token);
+	client.addRequestHeader("Content-Type", "application/json");
+	// writeln("Putting ", APIURL, endpoint, ": ", val.toString());
+	std.net.curl.put(APIURL ~ endpoint, val.toString(), client);
 }
 
 @property string environmentPivotalToken()
@@ -24,4 +34,9 @@ JSONValue getMe()
 JSONValue getStory(string storyID)
 {
 	return get(environmentPivotalToken, "stories/" ~ storyID);
+}
+
+void start(string storyID)
+{
+	put(environmentPivotalToken, "stories/" ~ storyID, JSONValue(["current_state" : "started"]));
 }
