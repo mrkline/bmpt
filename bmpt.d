@@ -1,10 +1,11 @@
-import std.c.stdlib;
 import std.stdio;
 
+import help;
 import clone;
 import rerere;
 import whoami;
 import start;
+import checkout;
 
 void main(string[] args)
 {
@@ -34,19 +35,19 @@ void main(string[] args)
 			startStory(args);
 			break;
 
-		default:
-			writeHelp();
-	}
-}
+		case "checkout":
+		case "co":
+			checkoutStory(args);
+			break;
 
-void writeHelp()
-{
-	writeln(helpText);
-	exit(1);
+		default:
+			writeHelp(helpText);
+	}
 }
 
 void writeVersion()
 {
+	import std.c.stdlib;
 	writeln(versionText);
 	exit(0);
 }
@@ -66,7 +67,10 @@ Subcommands:
     Print some basic information about your Pivotal Tracker account
 
   start
-    Creates a branch for a given PT story, or checks out the existing one
+    Creates a branch for a given PT story
+
+  checkout, co
+    Checks out a branch for a given PT story
 EOS";
 
 private string versionText = q"EOS

@@ -3,6 +3,10 @@ import std.string;
 import std.exception;
 import std.array;
 import std.ascii;
+import std.regex;
+import std.conv;
+import std.traits;
+import std.range;
 
 import processutils;
 
@@ -36,6 +40,37 @@ auto getBranchNameFromID(string id, bool includeRemotes = true)
 	return ret;
 }
 
+string getIDFromCurrentBranch()
+{
+	char[] please = "wat".dup;
+	please.popFrontExactly(2);
+
+	auto branchName = run(["git", "branch"])
+		.byLine
+		.filter!(l => l[0] == '*') // The current branch is starred
+		.front(); // Grab the line
+	branchName.popFrontExactly(2); // Cut off the "* ";
+	return getIDFromBranchName(branchName);
+}
+
+string getIDFromBranchName(S)(S branchName) if (isSomeString!S)
+{
+	enum branchRegex = ctRegex!(`(?:US-)(\d+)(?:\w+)?`);
+	auto match = branchName.matchFirst(branchRegex);
+	enforce(match,
+		"No ID could be found from the branch name \"" ~ branchName ~ "\"");
+	return match[1].to!string;
+}
+
+string getBranchNameFromID(string storyID, string title)
+{
+	string branchName = "US-" ~ storyID;
+	if (isValidTitle(title))
+		branchName ~= "-" ~ title;
+
+	return branchName;
+}
+
 bool isValidTitle(string title) {
-	return title.all!(c => c.isAlphaNum() || c == '_');
+	return title.length > 0 && title.all!(c => c.isAlphaNum() || c == '_');
 }
