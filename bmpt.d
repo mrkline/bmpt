@@ -12,11 +12,12 @@ void main(string[] args)
 	import std.getopt;
 
 	getopt(args,
+		std.getopt.config.passThrough,
 		std.getopt.config.caseSensitive,
 		"version", &writeVersion);
 
 	if (args.length < 2)
-		writeHelp();
+		writeHelp(helpText);
 
 	switch(args[1]) {
 		case "clone":

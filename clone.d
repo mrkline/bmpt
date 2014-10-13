@@ -4,6 +4,7 @@ import std.file;
 import std.string;
 import std.process;
 
+import help;
 import processutils;
 import rerere;
 import git;
@@ -16,7 +17,7 @@ void cloneBPF(string[] args)
 
 	getopt(args,
 		std.getopt.config.caseSensitive,
-		"help|h",  &writeHelp,
+		"help|h",  function void() { writeHelp(helpText); },
 		"origin|o", &remote);
 
 	// We don't care where we came from and we know the first arg after that was "clone"
@@ -24,7 +25,7 @@ void cloneBPF(string[] args)
 
 	// We should have a single argument at this point: the remote URL
 	if (args.length > 2)
-		writeHelp();
+		writeHelp(helpText);
 
 	string[] cloneArgs = ["-o", remote] ~ args;
 
@@ -53,12 +54,6 @@ void createOrCheckout(string branch, string remote = "origin")
 			"Automatically creating " ~ branch ~ " branch"], noRedirect);
 		run(["git", "push", remote, branch, "-u"], noRedirect);
 	}
-}
-
-void writeHelp()
-{
-	writeln(helpText);
-	exit(1);
 }
 
 private string helpText = q"EOS
