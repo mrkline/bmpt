@@ -21,24 +21,22 @@ void setupRerere(string remoteURL, string remote = "origin")
 	string root = getRepoRoot();
 	string rrPath = root ~ "/.git/rr-cache";
 	string rrGitDir = rrPath ~ "/.git";
-	if (!exists(rrPath) || !exists(rrGitDir)) {
-		run(["git", "init", rrPath]);
-		string cwd = getcwd();
-		chdir(rrPath);
-		scope(exit) chdir(cwd);
-		run(["git", "remote", "add", remote, remoteURL]);
-	}
-	else {
-		writeln("  Rerere cache already exists and is a repository.");
-	}
 
-	// Switch to our rerere cache
+	enforce(!exists(rrPath), "The rerere cache already exists. "
+		"Bailing as it is assumed you know what you are doing more than this tool...");
+	enforce(!exists(rrGitDir), "The rerere cache is already a git repo. "
+		"Bailing as it is assumed you know what you are doing more than this tool...");
+
+	writeln("  Creating rr-cache directory and pointing it at the repo...");
+	run(["git", "init", rrPath]);
 	string cwd = getcwd();
 	chdir(rrPath);
 	scope(exit) chdir(cwd);
+	run(["git", "remote", "add", "-t", "rr-cache", remote, remoteURL]);
+	writeln("  Fetching rerere cache...");
 
 	// A remote has the branch 'rr-cache', switch to it
-	if (executeShell("git branch -r | grep rr-cache").status == 0) {
+	if (execute(["git", "fetch"]).status == 0) {
 		writeln("  Checking out existing shared rerere cache...");
 		run(["git", "checkout", "rr-cache"]);
 	}

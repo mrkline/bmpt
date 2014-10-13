@@ -33,13 +33,9 @@ void cloneBPF(string[] args)
 	writeln("Cloning repository...");
 	string clonedDir = cloneRepo(cloneArgs);
 	chdir(clonedDir);
-	writeln("Checking out master branch...");
-	run(["git", "checkout", "master"]);
 	createOrCheckout("dev", remote);
 	createOrCheckout("rc", remote);
 	setupRerere(args[0], remote);
-	writeln("Checking out master branch (again)...");
-	run(["git", "checkout", "master"]);
 }
 
 void createOrCheckout(string branch, string remote = "origin")
@@ -52,7 +48,7 @@ void createOrCheckout(string branch, string remote = "origin")
 	// Otherwise create an orphan branch and push it up
 	else {
 		writeln("Creating and pushing new " ~ branch ~ " branch to " ~ remote ~ "...");
-		run(["git", "checkout", "-b", branch, "master"], noRedirect);
+		run(["git", "checkout", "-b", branch], noRedirect);
 		run(["git", "commit", "-a", "--allow-empty", "-m",
 			"Automatically creating " ~ branch ~ " branch"], noRedirect);
 		run(["git", "push", remote, branch, "-u"], noRedirect);

@@ -25,10 +25,10 @@ File runTemplate(alias runWith, S)(S command, Redirect flags)
 			commandAsString = command.join(" ");
 		}
 
-		string exceptionMessage = commandAsString ~ " failed. ";
+		string exceptionMessage = commandAsString ~ " failed.";
 
 		if ((flags & Redirect.stderrToStdout) == Redirect.stderrToStdout) {
-			exceptionMessage ~= "Stderr was redirected to stdout.";
+			exceptionMessage ~= " Stderr was redirected to stdout.";
 		}
 		else if ((flags & Redirect.stderr) != cast(Redirect)0) {
 			// Add no message about stderr (stderr was not redirected)
@@ -38,9 +38,9 @@ File runTemplate(alias runWith, S)(S command, Redirect flags)
 			// and join those lines together
 			string stderr = pipes.stderr.byLine(KeepTerminator.yes).join().strip().idup;
 			if (stderr.length > 0)
-				exceptionMessage ~= "Stderr was empty.";
+				exceptionMessage ~= " Stderr was empty.";
 			else
-				exceptionMessage ~= "Stderr contained:\n" ~ stderr;
+				exceptionMessage ~= " Stderr contained:\n" ~ stderr;
 		}
 
 		throw new ProcessException(exceptionMessage);
