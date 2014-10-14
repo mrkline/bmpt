@@ -1,4 +1,3 @@
-import std.c.stdlib;
 import std.stdio;
 
 import help;
