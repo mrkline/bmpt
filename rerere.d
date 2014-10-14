@@ -91,13 +91,18 @@ void pushRerere()
 		.filter!(m => m.to!bool) // Regex matches are converible to booleans if found
 		.map!(m => m[1]); // The first match is the directory of the resolution
 
+	bool pushNeeded = !newResolutions.empty;
+
 	foreach (r; newResolutions) {
 		writeln("Sharing resolution ", r, "...");
 		run(["git", "add", r.to!string]);
 		run(["git", "commit", "-m", "Sharing resolution " ~ r.to!string]);
 	}
-	writeln("Pushing resolutions...");
-	run(["git", "push"]);
+
+	if (pushNeeded) {
+		writeln("Pushing resolutions...");
+		run(["git", "push"]);
+	}
 }
 
 void syncRerere()
