@@ -27,7 +27,7 @@ void checkoutStory(string storyID)
 	auto storyBranch = getBranchNameFromID(storyID);
 
 	if (storyBranch != "") {
-		writeln("Attempting to resume story by checking out branch ", storyBranch, "...");
+		writeln("Checking out branch ", storyBranch, "...");
 		run(["git", "checkout", storyBranch], noRedirect);
 		return;
 	}
