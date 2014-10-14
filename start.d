@@ -17,11 +17,13 @@ void startStory(string[] args)
 	import std.c.stdlib;
 
 	string title;
+	bool noCheckout;
 
 	getopt(args,
 		std.getopt.config.caseSensitive,
 		"help|h",  function void() { writeHelp(helpText); },
-		"title|T", &title);
+		"title|T", &title,
+		"no-checkout|n", &noCheckout);
 
 	args = args[2 .. $];
 
@@ -47,26 +49,27 @@ void startStory(string[] args)
 
 	// TODO: We might want to fetch before we do this
 
-	auto storyBranch = getBranchNameFromID(storyID);
-	if (storyBranch != "") {
-		checkoutStory(storyBranch);
-		writeln("Restarting story ", storyID, "...");
-		storyID.start();
-	}
-	else {
-		if (title == "")
-			title = titleFromStoryName(story["name"].str);
+	if (!noCheckout) {
+		auto storyBranch = getBranchNameFromID(storyID);
+		if (storyBranch != "") {
+			checkoutStory(storyBranch);
+			writeln("Restarting story ", storyID, "...");
+		}
+		else {
+			if (title == "")
+				title = titleFromStoryName(story["name"].str);
 
-		string branchName = getBranchNameFromID(storyID, title);
+			string branchName = getBranchNameFromID(storyID, title);
 
-		writeln("Creating the branch ", branchName,
-			" starting at master (which should match the last release)...");
-		run(["git", "checkout", "-b", branchName, getRemote() ~ "/master"], noRedirect);
+			writeln("Creating the branch ", branchName,
+				" starting at master (which should match the last release)...");
+			run(["git", "checkout", "-b", branchName, getRemote() ~ "/master"], noRedirect);
 
-		writeln("Pushing the new branch...");
-		// TODO: Do we need this complicated of a push?
-		run(["git", "push", "--progress", "--recurse-submodules=check", "-u", "origin",
-			"refs/heads/" ~ branchName ~ ":refs/heads/" ~ branchName], noRedirect);
+			writeln("Pushing the new branch...");
+			// TODO: Do we need this complicated of a push?
+			run(["git", "push", "--progress", "--recurse-submodules=check", "-u", "origin",
+				"refs/heads/" ~ branchName ~ ":refs/heads/" ~ branchName], noRedirect);
+		}
 	}
 
 	writeln("Marking story as started...");
@@ -101,7 +104,7 @@ string titleFromStoryName(string name)
 }
 
 private string helpText = q"EOS
-Usage: bmpt start [-T <title>] <story ID>
+Usage: bmpt start [-T <title>] [-n] <story ID>
 
 Options:
 
@@ -111,6 +114,9 @@ Options:
   --title, -T
     A title for the branch name.
     If it is not provided, the Pivotal ID will be used instead.
+
+  --no-checkout, -n
+    Just start the story, and do not start or check out its branch.
 
   <story ID>
     The Pivotal Tracker story to start
