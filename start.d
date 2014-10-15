@@ -119,5 +119,6 @@ Options:
     Just start the story, and do not start or check out its branch.
 
   <story ID>
-    The Pivotal Tracker story to start
+    The Pivotal Tracker story to start.
+    If no ID is provided, it is parsed from the current branch name.
 EOS";

@@ -7,11 +7,12 @@ import std.regex;
 import std.conv;
 import std.traits;
 import std.range;
+import std.typecons;
 
 import processutils;
 import git;
 
-auto getBranchFromID(string id, bool includeRemotes = true)
+auto getBranchFromID(string id, Flag!"includeRemotes" includeRemotes = Flag!"includeRemotes".yes)
 {
 	string[] branchCommand = ["git", "branch"];
 	if (includeRemotes)

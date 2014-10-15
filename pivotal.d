@@ -40,3 +40,8 @@ void start(string storyID)
 {
 	put(environmentPivotalToken, "stories/" ~ storyID, JSONValue(["current_state" : "started"]));
 }
+
+void finish(string storyID)
+{
+	put(environmentPivotalToken, "stories/" ~ storyID, JSONValue(["current_state" : "finished"]));
+}
