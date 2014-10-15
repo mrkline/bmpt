@@ -9,8 +9,9 @@ import std.traits;
 import std.range;
 
 import processutils;
+import git;
 
-auto getBranchNameFromID(string id, bool includeRemotes = true)
+auto getBranchFromID(string id, bool includeRemotes = true)
 {
 	string[] branchCommand = ["git", "branch"];
 	if (includeRemotes)
@@ -42,18 +43,10 @@ auto getBranchNameFromID(string id, bool includeRemotes = true)
 
 string getIDFromCurrentBranch()
 {
-	char[] please = "wat".dup;
-	please.popFrontExactly(2);
-
-	auto branchName = run(["git", "branch"])
-		.byLine
-		.filter!(l => l[0] == '*') // The current branch is starred
-		.front(); // Grab the line
-	branchName.popFrontExactly(2); // Cut off the "* ";
-	return getIDFromBranchName(branchName);
+	return branchNameToID(getCurrentBranchName());
 }
 
-string getIDFromBranchName(S)(S branchName) if (isSomeString!S)
+string branchNameToID(S)(S branchName) if (isSomeString!S)
 {
 	enum branchRegex = ctRegex!(`(?:US-)(\d+)(?:\w+)?`);
 	auto match = branchName.matchFirst(branchRegex);
@@ -62,7 +55,7 @@ string getIDFromBranchName(S)(S branchName) if (isSomeString!S)
 	return match[1].to!string;
 }
 
-string getBranchNameFromID(string storyID, string title)
+string IDToBranchName(string storyID, string title)
 {
 	string branchName = "US-" ~ storyID;
 	if (isValidTitle(title))

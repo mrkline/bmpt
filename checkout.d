@@ -23,7 +23,7 @@ void checkoutStory(string[] args)
 
 void checkoutStory(string storyID)
 {
-	auto storyBranch = getBranchNameFromID(storyID);
+	auto storyBranch = getBranchFromID(storyID);
 
 	if (storyBranch != "") {
 		writeln("Checking out branch ", storyBranch, "...");

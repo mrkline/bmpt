@@ -50,7 +50,7 @@ void startStory(string[] args)
 	// TODO: We might want to fetch before we do this
 
 	if (!noCheckout) {
-		auto storyBranch = getBranchNameFromID(storyID);
+		auto storyBranch = getBranchFromID(storyID);
 		if (storyBranch != "") {
 			checkoutStory(storyBranch);
 			writeln("Restarting story ", storyID, "...");
@@ -59,7 +59,7 @@ void startStory(string[] args)
 			if (title == "")
 				title = titleFromStoryName(story["name"].str);
 
-			string branchName = getBranchNameFromID(storyID, title);
+			string branchName = IDToBranchName(storyID, title);
 
 			writeln("Creating the branch ", branchName,
 				" starting at master (which should match the last release)...");

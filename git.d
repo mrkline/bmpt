@@ -1,6 +1,7 @@
 import std.exception;
 import std.string;
 import std.process;
+import std.range;
 
 import processutils;
 
@@ -46,6 +47,16 @@ string getConfig(string option)
 void setConfig(string option, string value)
 {
 	run(["git", "config", option, value]);
+}
+
+string getCurrentBranchName()
+{
+	auto branchName = run(["git", "branch"])
+		.byLine
+		.filter!(l => l[0] == '*') // The current branch is starred
+		.front(); // Grab the line
+	branchName.popFrontExactly(2); // Cut off the "* ";
+	return branchName.idup;
 }
 
 string getRemote()
