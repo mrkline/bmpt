@@ -1,8 +1,47 @@
 import std.stdio;
+import std.typecons;
 
 import processutils;
 import merge;
 import git;
+import help;
+import branches;
+
+void ongoingCommit(string[] args)
+{
+	import std.getopt;
+	import std.c.stdlib;
+
+	bool noMerge;
+
+	getopt(args,
+		std.getopt.config.caseSensitive,
+		"help|h",  function void() { writeHelp(helpText); });
+
+	args = args[2 .. $];
+
+	string storyID;
+	string branchName;
+
+	if (args.length > 1) {
+		writeHelp(helpText);
+	}
+	else if (args.length == 0) {
+		branchName = getCurrentBranchName();
+		storyID = branchNameToID(branchName);
+	}
+	else {
+		storyID = args[0];
+		branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
+	}
+
+	if (branchName == "") {
+		stderr.writeln("Error: Story ", storyID, " does not have a local branch.");
+		exit(1);
+	}
+
+	ongoingCommit(branchName, "dev");
+}
 
 void ongoingCommit(string from, string to)
 {
@@ -18,3 +57,16 @@ void ongoingCommit(string from, string to)
 
 	mergeBranch(from);
 }
+
+private string helpText = q"EOS
+Usage: bmpt ongoing
+
+Options:
+
+  --help, -h
+    Display this help text
+
+  <story ID>
+    The Pivotal Tracker story to merge to dev.
+    If no ID is provided, it is parsed from the current branch name.
+EOS";

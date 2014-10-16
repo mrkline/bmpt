@@ -9,6 +9,7 @@ import checkout;
 import merge;
 import finish;
 import resume;
+import ongoing;
 
 void main(string[] args)
 {
@@ -51,6 +52,10 @@ void main(string[] args)
 
 			case "finish":
 				finishStory(args);
+				break;
+
+			case "ongoing":
+				ongoingCommit(args);
 				break;
 
 			case "resume":
@@ -98,7 +103,10 @@ Subcommands:
     Create a branch for a given PT story and mark it as started in PT
 
   finish
-    Merges a branch for a given PT into dev and mark it as finished in PT
+    Merges a branch for a given PT story into dev and mark it as finished in PT
+
+  ongoing
+    Merges a branch for a given PT storoy into dev
 
   resume
     Used to resume actions after a manual merge
