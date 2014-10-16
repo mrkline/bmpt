@@ -4,6 +4,7 @@ import std.file;
 import std.string;
 
 import git;
+import help;
 
 shared static void function(string[])[string] resumeHandlers;
 
@@ -29,12 +30,28 @@ void registerResume(string key)
 	fh.writeln(key);
 }
 
-void resumeFromFile()
+void resumeFromFile(string[] args)
 {
+	import std.getopt;
 	import std.c.stdlib;
 
+	getopt(args,
+		std.getopt.config.caseSensitive,
+		"help|h",  function void() { writeHelp(helpText); });
+
 	enforceInRepo();
+
 	string filePath = getRepoRoot() ~ resumeFile;
+	if (!exists(filePath)) {
+		stderr.writeln("Error: bmpt has nothing to resume (no file was found at ",
+			filePath, ")");
+		exit(1);
+	}
+	if (!isFile(filePath)) {
+		stderr.writeln("Error: ", filePath, " is a directory when it should be a file.");
+		exit(1);
+	}
+
 	auto fh = File(filePath, "r");
 	foreach (line; fh.byLine) {
 		auto tokens = line.strip().idup.split();
@@ -50,3 +67,11 @@ void resumeFromFile()
 	remove(filePath);
 }
 
+private string helpText = q"EOS
+Usage: bmpt resume
+
+Options:
+
+  --help, -h
+    Display this help text
+EOS";

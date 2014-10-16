@@ -58,7 +58,7 @@ void main(string[] args)
 				break;
 
 			case "resume":
-				resumeFromFile();
+				resumeFromFile(args);
 				break;
 
 			default:
