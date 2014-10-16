@@ -8,19 +8,26 @@ import processutils;
 import git;
 import branches;
 import pivotal;
+import resume;
+import merge;
+
+private string resumeKey = "FINISH";
+
+shared static this()
+{
+	resumeHandlers[resumeKey] = &resumeFinish;
+}
 
 void finishStory(string[] args)
 {
 	import std.getopt;
 	import std.c.stdlib;
 
-	string title;
 	bool noMerge;
 
 	getopt(args,
 		std.getopt.config.caseSensitive,
 		"help|h",  function void() { writeHelp(helpText); },
-		"title|T", &title,
 		"no-merge|n", &noMerge);
 
 	args = args[2 .. $];
@@ -61,18 +68,19 @@ void finishStory(string[] args)
 	writeln("(any other kind of merge should not be needed)...");
 	run(["git", "merge", "--ff-only", getRemote() ~ "/dev"], noRedirect);
 
-	writeln("Attempting to merge ", branchName, " into dev.");
-	if (execute(["git", "merge", branchName]) != 0) {
-		writeln("An automatic merge failed.");
-		writeln("Resolve it manually and bmpt finish will resume when you commit the merge.");
-		exit(1); // Is this a success?
-	}
+	mergeBranch(branchName);
 
-	resumeFinish();
+	try {
+		resumeFinish();
+	}
+	catch (ResumeNeededException ex) {
+		// Append our "resume needed" flag to the file
+		throw ex;
+	}
 }
 
 
-void resumeFinish()
+private void resumeFinish()
 {
 }
 

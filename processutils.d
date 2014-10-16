@@ -51,17 +51,17 @@ File runTemplate(alias runWith, S)(S command, Redirect flags)
 		return pipes.stdout;
 }
 
-auto run(S)(S command, Redirect flags = Redirect.stderr | Redirect.stdout)
+auto run(S)(S command, Redirect flags = stderrToStdout)
 {
 	return runTemplate!pipeProcess(command, flags);
 }
 
-auto runShell(S)(S command, Redirect flags = Redirect.stderr | Redirect.stdout)
+auto runShell(S)(S command, Redirect flags = stderrToStdout)
 {
 	return runTemplate!pipeShell(command, flags);
 }
 
-string firstLineOf(S)(S command, Redirect flags = Redirect.stderr | Redirect.stdout)
+string firstLineOf(S)(S command, Redirect flags = stderrToStdout)
 	if (is(S == string) || is(S == string[]))
 {
 	auto output = run(command, flags).byLine;
