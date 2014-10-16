@@ -1,6 +1,7 @@
 import std.stdio;
 import std.typecons;
 import std.process;
+import std.exception;
 
 import help;
 import branches;
@@ -9,7 +10,7 @@ import git;
 import branches;
 import pivotal;
 import resume;
-import merge;
+import ongoing;
 
 private string resumeKey = "FINISH";
 
@@ -58,30 +59,26 @@ void finishStory(string[] args)
 		exit(1);
 	}
 
-	writeln("Switching to dev branch...");
-	run(["git", "checkout", "dev"], noRedirect);
-
-	writeln("Fetching to make sure dev is as up-to-date as possible...");
-	run(["git", "fetch"], noRedirect);
-
-	writeln("Fast-forwarding your dev to the remote's dev");
-	writeln("(any other kind of merge should not be needed)...");
-	run(["git", "merge", "--ff-only", getRemote() ~ "/dev"], noRedirect);
-
-	mergeBranch(branchName);
-
 	try {
-		resumeFinish();
+		ongoingCommit(branchName, "dev");
 	}
 	catch (ResumeNeededException ex) {
 		// Append our "resume needed" flag to the file
+		registerResume(resumeKey ~ " " ~ storyID);
 		throw ex;
 	}
+
+	resumeFinish([storyID]);
 }
 
 
-private void resumeFinish()
+private void resumeFinish(string[] tokens)
 {
+	enforce(tokens.length >= 1, "The bmpt resume file was missing information for bmpt finish");
+	// mergeFinish() will take care of sharing rerere, so we just mark the story as finished
+	string storyID = tokens[0];
+	writeln("Marking story ", storyID, " as finished...");
+	storyID.finish();
 }
 
 private string helpText = q"EOS

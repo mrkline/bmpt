@@ -6,6 +6,9 @@ import rerere;
 import whoami;
 import start;
 import checkout;
+import merge;
+import finish;
+import resume;
 
 void main(string[] args)
 {
@@ -19,30 +22,52 @@ void main(string[] args)
 	if (args.length < 2)
 		writeHelp(helpText);
 
-	switch(args[1]) {
-		case "clone":
-			cloneBPF(args);
-			break;
+	try {
+		switch(args[1]) {
+			case "version":
+				writeVersion();
+				break;
 
-		case "share-rerere":
-			syncRerere();
-			break;
+			case "clone":
+				cloneBPF(args);
+				break;
 
-		case "whoami":
-			writeWhoami();
-			break;
+			case "share-rerere":
+				syncRerere();
+				break;
 
-		case "start":
-			startStory(args);
-			break;
+			case "whoami":
+				writeWhoami();
+				break;
 
-		case "checkout":
-		case "co":
-			checkoutStory(args);
-			break;
+			case "checkout":
+			case "co":
+				checkoutStory(args);
+				break;
 
-		default:
-			writeHelp(helpText);
+			case "start":
+				startStory(args);
+				break;
+
+			case "finish":
+				finishStory(args);
+				break;
+
+			case "merge":
+				mergeBranch(args);
+				break;
+
+			case "resume":
+				resumeFromFile();
+				break;
+
+			default:
+				writeHelp(helpText);
+		}
+	}
+	catch (ResumeNeededException) {
+		// If bmpt needs to be resumed after a manual merge,
+		// this exception will bubble up to here. This is not a problem.
 	}
 }
 
@@ -58,6 +83,9 @@ Usage: bmpt [subcommand]
 
 Subcommands:
 
+  version, --version
+    Write version information and exit
+
   clone
     Clone a repository and set up BPF.
 
@@ -67,11 +95,20 @@ Subcommands:
   whoami
     Print some basic information about your Pivotal Tracker account
 
-  start
-    Creates a branch for a given PT story
-
   checkout, co
-    Checks out a branch for a given PT story
+    Check out the branch for a given PT story
+
+  start
+    Create a branch for a given PT story and mark it as started in PT
+
+  finish
+    Merges a branch for a given PT into dev and mark it as finished in PT
+
+  merge
+    Performs a git merge, then syncs the shared rerere cache.
+
+  resume
+    Used to resume actions after a manual merge
 EOS";
 
 private string versionText = q"EOS

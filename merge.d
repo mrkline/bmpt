@@ -6,6 +6,7 @@ import git;
 import processutils;
 import resume;
 import help;
+import rerere;
 
 private string resumeKey = "MERGE";
 
@@ -40,20 +41,20 @@ void mergeBranch(string branch)
 	if (wait(pipes.pid) != 0 && !pipes.stdout.byLine.filter!(s => s.canFind("CONFLICT")).empty()) {
 		writeln("An automatic merge failed.");
 		writeln("Resolve it manually and bmpt will resume when you commit the merge.");
-
-		// Append our "resume needed" flag to the file
-
+		registerResume(resumeKey);
 		throw new ResumeNeededException("Manual merge needed");
 	}
 	else {
 		write(pipes.stdout.byLine(KeepTerminator.yes));
 	}
 
-	finishMerge();
+	finishMerge(null);
 }
 
-private void finishMerge()
+private void finishMerge(string[] tokens)
 {
+	writeln("Finishing merge by sharing rerere cache...");
+	syncRerere();
 }
 
 private string helpText = q"EOS
@@ -66,4 +67,7 @@ Options:
 
   <branch name>
     The name of the branch to merge
+
+There is little reason to use this over "git merge && bmpt share-rerere".
+It was only added since the functionality was put in place for use in bmpt finish.
 EOS";
