@@ -53,10 +53,6 @@ void main(string[] args)
 				finishStory(args);
 				break;
 
-			case "merge":
-				mergeBranch(args);
-				break;
-
 			case "resume":
 				resumeFromFile(args);
 				break;
@@ -103,9 +99,6 @@ Subcommands:
 
   finish
     Merges a branch for a given PT into dev and mark it as finished in PT
-
-  merge
-    Performs a git merge, then syncs the shared rerere cache.
 
   resume
     Used to resume actions after a manual merge
