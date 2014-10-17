@@ -84,6 +84,9 @@ private void resumeFinish(string[] tokens)
 private string helpText = q"EOS
 Usage: bmpt finish
 
+Marks a Pivotal Tracker story as finished and merges its branch into dev.
+If no ID is given, the story ID is parsed from the current branch name.
+
 Options:
 
   --help, -h

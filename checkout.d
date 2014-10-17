@@ -39,6 +39,9 @@ void checkoutStory(string storyID)
 private string helpText = q"EOS
 Usage: bmpt checkout <story ID>
 
+Checks out a branch by finding the branch with the provided Pivotal story ID
+in its name.
+
 Options:
 
   --help, -h

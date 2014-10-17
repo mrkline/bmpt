@@ -61,6 +61,9 @@ void ongoingCommit(string from, string to)
 private string helpText = q"EOS
 Usage: bmpt ongoing
 
+Merges a Pivotal Tracker story's branch into dev.
+If no ID is given, the story ID is parsed from the current branch name.
+
 Options:
 
   --help, -h

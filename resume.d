@@ -75,6 +75,13 @@ void resumeFromFile(string[] args)
 private string helpText = q"EOS
 Usage: bmpt resume
 
+Resumes bmpt after a manual merge.
+Some actions such as "bmpt finish" and "bmpt ongoing" may result in a merge
+that must be manually resolved.
+Once this resolution is done, "bmpt resume" picks up where bmpt left off,
+taking actions like marking the story as finished in the case of "bmpt finish"
+and syncing the shared rerere cache.
+
 Options:
 
   --help, -h

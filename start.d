@@ -104,7 +104,13 @@ string titleFromStoryName(string name)
 }
 
 private string helpText = q"EOS
-Usage: bmpt start [-T <title>] [-n] <story ID>
+Usage: bmpt start [-T <title>] [-n] [<story ID>]
+
+Marks a Pivotal Tracker story as started and creates or checks out its branch.
+If no ID is given, the story ID is parsed from the current branch name.
+If an ID is given,
+  - If a branch exists for the given story ID, it is checked out.
+  - If no branch exists for the given ID, a branch is created for it.
 
 Options:
 
@@ -116,7 +122,7 @@ Options:
     If it is not provided, the Pivotal ID will be used instead.
 
   --no-checkout, -n
-    Just start the story, and do not start or check out its branch.
+    Just start the story, and do not create or check out its branch.
 
   <story ID>
     The Pivotal Tracker story to start.
