@@ -35,9 +35,12 @@ void resumeFromFile(string[] args)
 	import std.getopt;
 	import std.c.stdlib;
 
+	bool silent;
+
 	getopt(args,
 		std.getopt.config.caseSensitive,
-		"help|h",  function void() { writeHelp(helpText); });
+		"help|h",  function void() { writeHelp(helpText); },
+		"silent|s", &silent);
 
 	args = args[2 .. $];
 
@@ -48,9 +51,14 @@ void resumeFromFile(string[] args)
 
 	string filePath = getRepoRoot() ~ resumeFile;
 	if (!exists(filePath)) {
-		stderr.writeln("Error: bmpt has nothing to resume (no file was found at ",
-			filePath, ")");
-		exit(1);
+		if (silent) {
+			exit(0);
+		}
+		else {
+			stderr.writeln("Error: bmpt has nothing to resume (no file was found at ",
+				filePath, ")");
+			exit(1);
+		}
 	}
 	if (!isFile(filePath)) {
 		stderr.writeln("Error: ", filePath, " is a directory when it should be a file.");
@@ -73,7 +81,7 @@ void resumeFromFile(string[] args)
 }
 
 private string helpText = q"EOS
-Usage: bmpt resume
+Usage: bmpt resume [--silent]
 
 Resumes bmpt after a manual merge.
 Some actions such as "bmpt finish" and "bmpt ongoing" may result in a merge
@@ -83,6 +91,10 @@ taking actions like marking the story as finished in the case of "bmpt finish"
 and syncing the shared rerere cache.
 
 Options:
+
+  --silent, -s
+    If there is nothing to resume, don't write anything and exit cleanly.
+    This is useful when using bmpt resume in a git hook.
 
   --help, -h
     Display this help text
