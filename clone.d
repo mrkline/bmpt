@@ -58,6 +58,11 @@ void createOrCheckout(string branch, string remote = "origin")
 private string helpText = q"EOS
 Usage: bmpt clone [-o <name>] <remote URL> [<directory>]
 
+Clones a git repository and sets it up for BPF usage. This includes
+- Creating dev and rc branches
+- Creating a shared rerere cache by enabling rerere and turning .git/rr-cache
+  into a git repo that points at the rr-cache branch of the given remote URL.
+
 Options:
 
   --help, -h

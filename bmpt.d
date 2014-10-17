@@ -34,11 +34,11 @@ void main(string[] args)
 				break;
 
 			case "share-rerere":
-				syncRerere();
+				syncRerere(args);
 				break;
 
 			case "whoami":
-				writeWhoami();
+				writeWhoami(args);
 				break;
 
 			case "checkout":
@@ -110,6 +110,10 @@ Subcommands:
 
   resume
     Used to resume actions after a manual merge
+
+bmpt is Branch Management for Pivotal Tracker,
+a tool to assist with a Branch-Per-Feature (BPF) workflow using Pivotal.
+See bmpt <subcommand> --help to read about a specific subcommand.
 EOS";
 
 private string versionText = q"EOS

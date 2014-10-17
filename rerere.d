@@ -7,6 +7,7 @@ import std.algorithm;
 
 import processutils;
 import git;
+import help;
 
 void setupRerere(string remoteURL, string remote = "origin")
 {
@@ -105,8 +106,37 @@ void pushRerere()
 	}
 }
 
+void syncRerere(string[] args)
+{
+	import std.getopt;
+
+	getopt(args,
+		std.getopt.config.caseSensitive,
+		"help|h",  function void() { writeHelp(helpText); });
+
+	args = args[2 .. $];
+
+	if (args.length > 0)
+		writeHelp(helpText);
+
+	syncRerere();
+}
+
 void syncRerere()
 {
 	pullRerere();
 	pushRerere();
 }
+
+private string helpText = q"EOS
+Usage: bmpt share-rerere
+
+Pulls conflict resolutions from the rr-cache branch,
+adds new ones,
+and pushes the branch back (if needed) to the remote repo
+
+Options:
+
+  --help, -h
+    Display this help text.
+EOS";
