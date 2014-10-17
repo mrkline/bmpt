@@ -36,6 +36,10 @@ void cloneBPF(string[] args)
 	createOrCheckout("dev", remote);
 	createOrCheckout("rc", remote);
 	setupRerere(args[0], remote);
+	writeln(`Adding "bmpt resume" to the post-commit hook...`);
+	runShell(`echo "bmpt resume --silent" >> .git/hooks/post-commit`);
+	// TODO: We want a Windows equivalent too
+	run(["chmod", "+x", ".git/hooks/post-commit"]);
 }
 
 void createOrCheckout(string branch, string remote = "origin")
@@ -62,6 +66,7 @@ Clones a git repository and sets it up for BPF usage. This includes
 - Creating dev and rc branches
 - Creating a shared rerere cache by enabling rerere and turning .git/rr-cache
   into a git repo that points at the rr-cache branch of the given remote URL.
+- Adding "bmpt resume --silent" to the post-commit hook
 
 Options:
 
