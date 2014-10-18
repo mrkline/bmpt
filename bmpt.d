@@ -10,6 +10,7 @@ import merge;
 import finish;
 import resume;
 import ongoing;
+import test;
 
 void main(string[] args)
 {
@@ -52,6 +53,10 @@ void main(string[] args)
 
 			case "finish":
 				finishStories(args);
+				break;
+
+			case "test":
+				testStories(args);
 				break;
 
 			case "ongoing":
@@ -104,6 +109,9 @@ Subcommands:
 
   finish
     Merges branches for given PT stories into dev and mark them as finished
+
+  test
+    Merges branches for given PT stories into rc
 
   ongoing
     Merges a branch for a given PT storoy into dev
