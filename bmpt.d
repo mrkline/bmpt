@@ -51,7 +51,7 @@ void main(string[] args)
 				break;
 
 			case "finish":
-				finishStory(args);
+				finishStories(args);
 				break;
 
 			case "ongoing":
@@ -103,7 +103,7 @@ Subcommands:
     Create a branch for a given PT story and mark it as started in PT
 
   finish
-    Merges a branch for a given PT story into dev and mark it as finished in PT
+    Merges branches for given PT stories into dev and mark them as finished
 
   ongoing
     Merges a branch for a given PT storoy into dev

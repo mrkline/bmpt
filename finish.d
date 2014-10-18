@@ -19,7 +19,7 @@ shared static this()
 	resumeHandlers[resumeKey] = &resumeFinish;
 }
 
-void finishStory(string[] args)
+void finishStories(string[] args)
 {
 	import std.getopt;
 	import std.c.stdlib;
@@ -36,39 +36,43 @@ void finishStory(string[] args)
 	string storyID;
 	string branchName;
 
-	if (args.length > 1) {
-		writeHelp(helpText);
+	void finishHelper()
+	{
+		if (noMerge) {
+			writeln("Finishing story ", storyID, " without merging to dev...");
+			storyID.finish();
+			return;
+		}
+
+		if (branchName == "") {
+			stderr.writeln("Error: Story ", storyID, " does not have a local branch.");
+			exit(1);
+		}
+
+		try {
+			ongoingCommit(branchName, "dev");
+		}
+		catch (ResumeNeededException ex) {
+			// Append our "resume needed" flag to the file
+			registerResume(resumeKey ~ " " ~ storyID);
+			throw ex;
+		}
+
+		resumeFinish([storyID]);
 	}
-	else if (args.length == 0) {
+
+	if (args.length == 0) {
 		branchName = getCurrentBranchName();
 		storyID = branchNameToID(branchName);
+		finishHelper();
 	}
 	else {
-		storyID = args[0];
-		branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
+		foreach (arg; args) {
+			storyID = args[0];
+			branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
+			finishHelper();
+		}
 	}
-
-	if (noMerge) {
-		writeln("Finishing story ", storyID, " without merging to dev...");
-		storyID.finish();
-		return;
-	}
-
-	if (branchName == "") {
-		stderr.writeln("Error: Story ", storyID, " does not have a local branch.");
-		exit(1);
-	}
-
-	try {
-		ongoingCommit(branchName, "dev");
-	}
-	catch (ResumeNeededException ex) {
-		// Append our "resume needed" flag to the file
-		registerResume(resumeKey ~ " " ~ storyID);
-		throw ex;
-	}
-
-	resumeFinish([storyID]);
 }
 
 
@@ -82,9 +86,9 @@ private void resumeFinish(string[] tokens)
 }
 
 private string helpText = q"EOS
-Usage: bmpt finish
+Usage: bmpt finish [<story IDs>]
 
-Marks a Pivotal Tracker story as finished and merges its branch into dev.
+Marks Pivotal Tracker stories as finished and merges their branches into dev.
 If no ID is given, the story ID is parsed from the current branch name.
 
 Options:
@@ -93,9 +97,9 @@ Options:
     Display this help text
 
   --no-merge, -n
-    Just finish the story, and do not merge its
+    Just finish the story, and do not merge its branch
 
-  <story ID>
+  <story IDs>
     The Pivotal Tracker story to finish.
     If no ID is provided, it is parsed from the current branch name.
 EOS";
