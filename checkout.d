@@ -27,7 +27,7 @@ void checkoutStory(string storyID)
 
 	if (storyBranch != "") {
 		writeln("Checking out branch ", storyBranch, "...");
-		run(["git", "checkout", storyBranch], noRedirect);
+		run(["git", "checkout", storyBranch]);
 		return;
 	}
 	else {

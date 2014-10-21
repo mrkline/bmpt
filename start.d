@@ -63,7 +63,7 @@ void startStory(string[] args)
 
 			writeln("Creating the branch ", branchName,
 				" starting at master (which should match the last release)...");
-			run(["git", "checkout", "-b", branchName, getRemote() ~ "/master"], noRedirect);
+			run(["git", "checkout", "-b", branchName, getRemote() ~ "/master"]);
 
 			writeln("Pushing the new branch...");
 			// TODO: Do we need this complicated of a push?

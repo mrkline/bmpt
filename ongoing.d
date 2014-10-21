@@ -48,16 +48,16 @@ void ongoingCommit(string from, string to)
 	writeln("Fetching to make sure branches are as up-to-date as possible...");
 	run(["git", "fetch"], noRedirect);
 
-	writeln("Making sure " ~ from ~ " branch is up to date...");
-	run(["git", "checkout", from], noRedirect);
-	run(["git", "merge", "--ff-only", getRemote() ~ "/" ~ from], noRedirect);
+	writeln("Checking out and fast forwarding ", from, "...");
+	run(["git", "checkout", from]);
+	run(["git", "merge", "--ff-only", getRemote() ~ "/" ~ from]);
 
 	writeln("Switching to " ~ to ~ " branch...");
-	run(["git", "checkout", to], noRedirect);
+	run(["git", "checkout", to]);
 
 	writeln("Fast-forwarding your " ~ to ~ " branch to the remote's " ~ to ~ " branch");
 	writeln("(any other kind of merge should not be needed)...");
-	run(["git", "merge", "--ff-only", getRemote() ~ "/" ~ to], noRedirect);
+	run(["git", "merge", "--ff-only", getRemote() ~ "/" ~ to]);
 
 	mergeBranch(from);
 }

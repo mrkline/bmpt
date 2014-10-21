@@ -52,9 +52,10 @@ void createOrCheckout(string branch, string remote = "origin")
 	// Otherwise create an orphan branch and push it up
 	else {
 		writeln("Creating and pushing new " ~ branch ~ " branch to " ~ remote ~ "...");
-		run(["git", "checkout", "-b", branch], noRedirect);
+		run(["git", "checkout", "-b", branch]);
 		run(["git", "commit", "-a", "--allow-empty", "-m",
-			"Automatically creating " ~ branch ~ " branch"], noRedirect);
+			"Automatically creating " ~ branch ~ " branch"]);
+		// Don't redirect output for push since it can take a larger amount of time.
 		run(["git", "push", remote, branch, "-u"], noRedirect);
 	}
 }
