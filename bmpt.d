@@ -11,6 +11,8 @@ import finish;
 import resume;
 import ongoing;
 import test;
+import accept;
+import reject;
 
 void main(string[] args)
 {
@@ -61,6 +63,14 @@ void main(string[] args)
 
 			case "test":
 				testStories(args);
+				break;
+
+			case "accept":
+				acceptStories(args);
+				break;
+
+			case "reject":
+				rejectStories(args);
 				break;
 
 			case "resume":
@@ -115,6 +125,12 @@ Subcommands:
 
   test
     Merges branches for given PT stories into rc
+
+  accept
+    Accepts delivered PT stories
+
+  reject
+    Rejects delivered PT stories
 
   resume
     Used to resume actions after a manual merge

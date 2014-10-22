@@ -46,3 +46,13 @@ void finish(string storyID)
 {
 	put(environmentPivotalToken, "stories/" ~ storyID, JSONValue(["current_state" : "finished"]));
 }
+
+void accept(string storyID)
+{
+	put(environmentPivotalToken, "stories/" ~ storyID, JSONValue(["current_state" : "accepted"]));
+}
+
+void reject(string storyID)
+{
+	put(environmentPivotalToken, "stories/" ~ storyID, JSONValue(["current_state" : "rejected"]));
+}
