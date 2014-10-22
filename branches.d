@@ -68,3 +68,19 @@ string IDToBranchName(string storyID, string title)
 bool isValidTitle(string title) {
 	return title.length > 0 && title.all!(c => c.isAlphaNum() || c == '_');
 }
+
+void runOnCurrentOrSpecifiedBranches(void delegate(string, string) toRun, string[] args)
+{
+	if (args.length == 0) {
+		string branchName = getCurrentBranchName();
+		string storyID = branchNameToID(branchName);
+		toRun(branchName, storyID);
+	}
+	else {
+		foreach (arg; args) {
+			string storyID = args[0];
+			string branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
+			toRun(branchName, storyID);
+		}
+	}
+}

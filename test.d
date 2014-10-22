@@ -17,10 +17,7 @@ void testStories(string[] args)
 
 	args = args[2 .. $];
 
-	string storyID;
-	string branchName;
-
-	void testHelper()
+	void testHelper(string branchName, string storyID)
 	{
 		if (branchName == "") {
 			stderr.writeln("Error: Story ", storyID, " does not have a local branch.");
@@ -30,18 +27,7 @@ void testStories(string[] args)
 		ongoingCommit(branchName, "rc");
 	}
 
-	if (args.length == 0) {
-		branchName = getCurrentBranchName();
-		storyID = branchNameToID(branchName);
-		testHelper();
-	}
-	else {
-		foreach (arg; args) {
-			storyID = args[0];
-			branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
-			testHelper();
-		}
-	}
+	runOnCurrentOrSpecifiedBranches(&testHelper, args);
 }
 
 private string helpText = q"EOS

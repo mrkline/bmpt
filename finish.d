@@ -33,10 +33,7 @@ void finishStories(string[] args)
 
 	args = args[2 .. $];
 
-	string storyID;
-	string branchName;
-
-	void finishHelper()
+	void finishHelper(string branchName, string storyID)
 	{
 		if (noMerge) {
 			writeln("Finishing story ", storyID, " without merging to dev...");
@@ -61,18 +58,7 @@ void finishStories(string[] args)
 		resumeFinish([storyID]);
 	}
 
-	if (args.length == 0) {
-		branchName = getCurrentBranchName();
-		storyID = branchNameToID(branchName);
-		finishHelper();
-	}
-	else {
-		foreach (arg; args) {
-			storyID = args[0];
-			branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
-			finishHelper();
-		}
-	}
+	runOnCurrentOrSpecifiedBranches(&finishHelper, args);
 }
 
 
