@@ -1,6 +1,7 @@
 import std.stdio;
 import std.algorithm;
 import std.process;
+import std.array;
 
 import git;
 import processutils;
@@ -27,7 +28,7 @@ void mergeBranch(string branch)
 		throw new ResumeNeededException("Manual merge needed");
 	}
 	else {
-		write(pipes.stdout.byLine(KeepTerminator.yes));
+		write(pipes.stdout.byLine(KeepTerminator.yes).join());
 	}
 
 	finishMerge(null);

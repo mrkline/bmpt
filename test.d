@@ -5,6 +5,7 @@ import help;
 import ongoing;
 import git;
 import branches;
+import pivotal;
 
 void testStories(string[] args)
 {
@@ -19,6 +20,13 @@ void testStories(string[] args)
 
 	void testHelper(string branchName, string storyID)
 	{
+		auto story = getStory(storyID);
+
+		if (story["story_type"].str != "chore" && story["current_state"].str != "delivered") {
+			stderr.writeln("Error: Can't test a story that isn't delivered.");
+			exit(1);
+		}
+
 		if (branchName == "") {
 			stderr.writeln("Error: Story ", storyID, " does not have a local branch.");
 			exit(1);

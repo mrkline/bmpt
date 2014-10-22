@@ -33,6 +33,7 @@ JSONValue getMe()
 
 JSONValue getStory(string storyID)
 {
+	writeln("Fetching story ", storyID, " information from Pivotal Tracker...");
 	return get(environmentPivotalToken, "stories/" ~ storyID);
 }
 
