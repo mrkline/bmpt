@@ -55,12 +55,12 @@ void main(string[] args)
 				finishStories(args);
 				break;
 
-			case "test":
-				testStories(args);
-				break;
-
 			case "ongoing":
 				ongoingCommit(args);
+				break;
+
+			case "test":
+				testStories(args);
 				break;
 
 			case "resume":
@@ -110,11 +110,11 @@ Subcommands:
   finish
     Merges branches for given PT stories into dev and mark them as finished
 
+  ongoing
+    Merges branches for given PT stories into dev
+
   test
     Merges branches for given PT stories into rc
-
-  ongoing
-    Merges a branch for a given PT storoy into dev
 
   resume
     Used to resume actions after a manual merge

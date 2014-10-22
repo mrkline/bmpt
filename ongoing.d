@@ -20,27 +20,17 @@ void ongoingCommit(string[] args)
 
 	args = args[2 .. $];
 
-	string storyID;
-	string branchName;
+	void ongoingHelper(string branchName, string storyID)
+	{
+		if (branchName == "") {
+			stderr.writeln("Error: Story ", storyID, " does not have a local branch.");
+			exit(1);
+		}
 
-	if (args.length > 1) {
-		writeHelp(helpText);
-	}
-	else if (args.length == 0) {
-		branchName = getCurrentBranchName();
-		storyID = branchNameToID(branchName);
-	}
-	else {
-		storyID = args[0];
-		branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
+		ongoingCommit(branchName, "dev");
 	}
 
-	if (branchName == "") {
-		stderr.writeln("Error: Story ", storyID, " does not have a local branch.");
-		exit(1);
-	}
-
-	ongoingCommit(branchName, "dev");
+	runOnCurrentOrSpecifiedBranches(&ongoingHelper, args);
 }
 
 void ongoingCommit(string from, string to)
