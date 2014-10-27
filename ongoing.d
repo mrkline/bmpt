@@ -5,7 +5,7 @@ import processutils;
 import merge;
 import git;
 import help;
-import branches;
+import ptbranches;
 
 void ongoingCommit(string[] args)
 {

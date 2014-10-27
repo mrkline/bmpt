@@ -5,7 +5,7 @@ import std.utf;
 import std.array;
 
 import pivotal;
-import branches;
+import ptbranches;
 import processutils;
 import git;
 import checkout;

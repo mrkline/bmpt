@@ -4,7 +4,7 @@ import std.typecons;
 import help;
 import ongoing;
 import git;
-import branches;
+import ptbranches;
 import pivotal;
 
 void testStories(string[] args)

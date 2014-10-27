@@ -4,10 +4,10 @@ import std.process;
 import std.exception;
 
 import help;
-import branches;
+import ptbranches;
 import processutils;
 import git;
-import branches;
+import ptbranches;
 import pivotal;
 import resume;
 import ongoing;
