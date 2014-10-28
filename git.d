@@ -2,6 +2,9 @@ import std.exception;
 import std.string;
 import std.process;
 import std.range;
+import std.typecons;
+import std.traits;
+import std.algorithm;
 
 import processutils;
 
@@ -68,4 +71,27 @@ string getRemote()
 	string ret = output.front.strip().idup;
 	// TODO: See if there are multiple remotes and warn as needed?
 	return ret;
+}
+
+S stripRemoteFromBranchName(S)(S branchName)
+	if (isSomeString!S)
+{
+	return branchName[branchName.lastIndexOf('/') + 1 .. $];
+}
+
+bool currentBranchIsDescendantOf(S)(S predecessor,
+                                 Flag!"includeRemotes" includeRemotes = Flag!"includeRemotes".yes)
+	if (isSomeString!S)
+{
+	string[] branchCommand = ["git", "branch", "-a"];
+
+	return run(branchCommand)
+		.byLine
+		.map!(l => l[l.lastIndexOf('*') + 1 .. $]) // Remove the star from the current branch
+		.map!(l => l.strip())
+		.map!(s => stripRemoteFromBranchName(s).idup) // Slice off remote part (before and including '/')
+		.array // Sort needs to work on random access ranges.
+		.sort
+		.uniq
+		.canFind(predecessor); // The branch should contain our predecessor
 }

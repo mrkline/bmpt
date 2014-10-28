@@ -20,9 +20,9 @@ auto getBranchFromID(string id, Flag!"includeRemotes" includeRemotes = Flag!"inc
 
 	auto matchingBranches = run(branchCommand)
 		.byLine
-		.map!(l => l[max(0, l.lastIndexOf('*') + 1) .. $]) // Remove the star from the current branch
+		.map!(l => l[l.lastIndexOf('*') + 1 .. $]) // Remove the star from the current branch
 		.map!(l => l.strip())
-		.map!(s => s[max(0, s.lastIndexOf('/') + 1) .. $].idup) // Slice off remote part (before and including '/')
+		.map!(s => stripRemoteFromBranchName(s).idup) // Slice off remote part (before and including '/')
 		.array // Sort needs to work on random access ranges.
 		.sort
 		.uniq

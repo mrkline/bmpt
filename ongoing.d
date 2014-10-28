@@ -1,5 +1,6 @@
 import std.stdio;
 import std.typecons;
+import std.exception;
 
 import processutils;
 import merge;
@@ -41,6 +42,10 @@ void ongoingCommit(string from, string to)
 	writeln("Checking out and fast forwarding ", from, "...");
 	run(["git", "checkout", from]);
 	run(["git", "merge", "--ff-only", getRemote() ~ "/" ~ from]);
+
+	enforce(currentBranchIsDescendantOf("master"),
+	        from ~ " is not a descendant of the master branch. "
+	        "Rebase " ~ from ~ " onto master before integrating it.");
 
 	writeln("Switching to " ~ to ~ " branch...");
 	run(["git", "checkout", to]);
