@@ -82,7 +82,9 @@ bool currentBranchIsDescendantOf(S)(S predecessor,
                                  Flag!"includeRemotes" includeRemotes = Flag!"includeRemotes".yes)
 	if (isSomeString!S)
 {
-	string[] branchCommand = ["git", "branch", "-a"];
+	string[] branchCommand = ["git", "branch"];
+	if (includeRemotes)
+		branchCommand ~= "-a";
 
 	return run(branchCommand)
 		.byLine
