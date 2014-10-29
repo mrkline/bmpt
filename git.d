@@ -23,6 +23,8 @@ string getRepoRoot()
 	return firstLineOf(["git", "rev-parse", "--show-toplevel"]);
 }
 
+/// Runs "git clone" with the provided arguments
+/// and returns the cloned directory's name.
 string cloneRepo(string[] args)
 {
 	import std.stdio;
@@ -39,14 +41,17 @@ string cloneRepo(string[] args)
 	if (wait(pipes.pid) != 0)
 		throw new ProcessException("git clone " ~ args.join(" ") ~ " failed.");
 
+	// The first line printed to stderr is "Cloning into '<dir>'...
 	return errOutput[errOutput.indexOf('\'') + 1 .. errOutput.lastIndexOf('\'')];
 }
 
+// Gets a value (as a string) from git config
 string getConfig(string option)
 {
 	return firstLineOf(["git", "config", "--get", option]);
 }
 
+// Sets a value (as a string) with git config
 void setConfig(string option, string value)
 {
 	run(["git", "config", option, value]);
@@ -62,6 +67,9 @@ string getCurrentBranchName()
 	return branchName.idup;
 }
 
+/// Gets the first listed remote f rom "git remote".
+/// TODO: We make the rather callous assumption that you will only be using one remote,
+///       though this is usually the case for BPF.
 string getRemote()
 {
 	auto output = run(["git", "remote"]).byLine;
@@ -72,12 +80,16 @@ string getRemote()
 	return ret;
 }
 
+/// Strips the remote part of a branch name.
+/// This is provided as a template so that any string range
+/// (such as the result of mapping and filtering) can call it.
 S stripRemoteFromBranchName(S)(S branchName)
 	if (isSomeString!S)
 {
 	return branchName[branchName.lastIndexOf('/') + 1 .. $];
 }
 
+/// Returns true if the current branch is a descendant of the given commit
 bool currentBranchIsDescendantOf(S)(S predecessor,
                                  Flag!"includeRemotes" includeRemotes = Flag!"includeRemotes".yes)
 	if (isSomeString!S)

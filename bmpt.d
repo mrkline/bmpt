@@ -14,15 +14,23 @@ import test;
 import accept;
 import reject;
 
+/**
+ * bmpt is essentially just a collection of subcommands packaged
+ * into the same binary and with lots of shared code.
+ * Because of this, the actual entry point just figures out what subcommand
+ * is to be run and passes the argument list to that subcommand.
+ */
 void main(string[] args)
 {
 	import std.getopt;
 
 	getopt(args,
+		// Let args pass through to the entry points for our various commands
 		std.getopt.config.passThrough,
 		std.getopt.config.caseSensitive,
 		"version", &writeVersion);
 
+	// Any one of our subcommands should be "bmpt <subcommand>"
 	if (args.length < 2)
 		writeHelp(helpText);
 

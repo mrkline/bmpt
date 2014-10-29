@@ -8,12 +8,11 @@ import git;
 import help;
 import ptbranches;
 
+/// The entry point for "bmpt ongoing"
 void ongoingCommit(string[] args)
 {
 	import std.getopt;
 	import std.c.stdlib;
-
-	bool noMerge;
 
 	getopt(args,
 		std.getopt.config.caseSensitive,
@@ -32,6 +31,9 @@ void ongoingCommit(string[] args)
 	runOnCurrentOrSpecifiedBranches(&ongoingHelper, args);
 }
 
+/// Merges the "from" branch into the "to" branch,
+/// making sure "to" is up to date first and
+/// using the merge module to share the rerere cache as needed
 void ongoingCommit(string from, string to)
 {
 	writeln("Fetching to make sure branches are as up-to-date as possible...");

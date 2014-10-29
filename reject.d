@@ -4,6 +4,7 @@ import help;
 import pivotal;
 import ptbranches;
 
+/// The entry point for "bmpt reject"
 void rejectStories(string[] args)
 {
 	import std.getopt;

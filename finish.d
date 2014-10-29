@@ -12,6 +12,7 @@ import pivotal;
 import resume;
 import ongoing;
 
+// See the resume module for an explanation.
 private string resumeKey = "FINISH";
 
 shared static this()
@@ -19,6 +20,7 @@ shared static this()
 	resumeHandlers[resumeKey] = &resumeFinish;
 }
 
+/// The entry point for "bmpt finish"
 void finishStories(string[] args)
 {
 	import std.getopt;
@@ -60,6 +62,7 @@ void finishStories(string[] args)
 }
 
 
+/// The part of "bmpt finish" that takes place after the merge.
 private void resumeFinish(string[] tokens)
 {
 	enforce(tokens.length >= 1, "The bmpt resume file was missing information for bmpt finish");

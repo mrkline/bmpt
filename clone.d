@@ -8,10 +8,12 @@ import processutils;
 import rerere;
 import git;
 
+/// The entry point for "bmpt clone"
 void cloneBPF(string[] args)
 {
 	import std.getopt;
 
+	// If one isn't specified, assume the remote is "origin"
 	string remote = "origin";
 
 	getopt(args,
@@ -19,7 +21,8 @@ void cloneBPF(string[] args)
 		"help|h",  function void() { writeHelp(helpText); },
 		"origin|o", &remote);
 
-	// We should have a single argument at this point: the remote URL
+	// We should have no more than two arguments at this point:
+	// the remote URL and possibly a directory.
 	if (args.length > 2)
 		writeHelp(helpText);
 
@@ -30,15 +33,20 @@ void cloneBPF(string[] args)
 	writeln("Cloning repository...");
 	string clonedDir = cloneRepo(cloneArgs);
 	chdir(clonedDir);
+
+	// Create or checkout the dev and rc branches for BPF workflow.
 	createOrCheckout("dev", remote);
 	createOrCheckout("rc", remote);
 	setupRerere(args[0], remote);
+
 	writeln(`Adding "bmpt resume" to the post-commit hook...`);
 	runShell(`echo "bmpt resume --silent" >> .git/hooks/post-commit`);
 	// TODO: We want a Windows equivalent too
 	run(["chmod", "+x", ".git/hooks/post-commit"]);
 }
 
+/// Checks out a branch if it exists.
+/// If it doesn't, create the branch and push it to the provided remote.
 void createOrCheckout(string branch, string remote = "origin")
 {
 	// A remote has the branch 'rr-cache', switch to it

@@ -9,6 +9,7 @@ import processutils;
 import git;
 import help;
 
+/// Sets up rerere cache sharing for the repository
 void setupRerere(string remoteURL, string remote = "origin")
 {
 	enforceInRepo();
@@ -29,10 +30,15 @@ void setupRerere(string remoteURL, string remote = "origin")
 		"Bailing as it is assumed you know what you are doing more than this tool...");
 
 	writeln("  Creating rr-cache directory and pointing it at the repo...");
+
+	// The way the rerere cache is actually shared is by making .git/rr-cache its own reposity.
+	// Yes, we put Git inside of Git.
 	run(["git", "init", rrPath]);
 	string cwd = getcwd();
 	chdir(rrPath);
 	scope(exit) chdir(cwd);
+	
+	// We can make life a little more sane by only tracking the rr-cache branch
 	run(["git", "remote", "add", "-t", "rr-cache", remote, remoteURL]);
 	writeln("  Fetching rerere cache...");
 
@@ -52,6 +58,7 @@ void setupRerere(string remoteURL, string remote = "origin")
 	}
 }
 
+/// Enforces that we have set up the shared rerere cache
 void enforceRerereSetup()
 {
 	enforceInRepo();
@@ -60,6 +67,7 @@ void enforceRerereSetup()
 		"The shared rerere cache has not been set up.");
 }
 
+/// Pulls the rr-cache branch from the remote
 void pullRerere()
 {
 	enforceRerereSetup();
@@ -71,6 +79,7 @@ void pullRerere()
 	run(["git", "pull"]);
 }
 
+/// Commits new rerere resolutions and pushes if there were any
 void pushRerere()
 {
 	import std.regex;
@@ -106,6 +115,7 @@ void pushRerere()
 	}
 }
 
+/// The entry point for "bmpt share-rerere"
 void syncRerere(string[] args)
 {
 	import std.getopt;
@@ -120,6 +130,7 @@ void syncRerere(string[] args)
 	syncRerere();
 }
 
+/// Pulls and then pushes the rerere cache
 void syncRerere()
 {
 	pullRerere();
