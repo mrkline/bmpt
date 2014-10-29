@@ -78,7 +78,7 @@ void runOnCurrentOrSpecifiedBranches(void delegate(string, string) toRun, string
 	}
 	else {
 		foreach (arg; args) {
-			string storyID = args[0];
+			string storyID = arg;
 			string branchName = getBranchFromID(storyID, Flag!"includeRemotes".no);
 			toRun(branchName, storyID);
 		}
