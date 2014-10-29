@@ -31,8 +31,6 @@ void finishStories(string[] args)
 		"help|h",  function void() { writeHelp(helpText); },
 		"no-merge|n", &noMerge);
 
-	args = args[2 .. $];
-
 	void finishHelper(string branchName, string storyID)
 	{
 		if (noMerge) {

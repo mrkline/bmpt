@@ -16,8 +16,6 @@ void testStories(string[] args)
 		std.getopt.config.caseSensitive,
 		"help|h",  function void() { writeHelp(helpText); });
 
-	args = args[2 .. $];
-
 	void testHelper(string branchName, string storyID)
 	{
 		auto story = getStory(storyID);

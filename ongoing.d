@@ -19,8 +19,6 @@ void ongoingCommit(string[] args)
 		std.getopt.config.caseSensitive,
 		"help|h",  function void() { writeHelp(helpText); });
 
-	args = args[2 .. $];
-
 	void ongoingHelper(string branchName, string storyID)
 	{
 		if (branchName == "") {

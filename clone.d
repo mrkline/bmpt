@@ -19,9 +19,6 @@ void cloneBPF(string[] args)
 		"help|h",  function void() { writeHelp(helpText); },
 		"origin|o", &remote);
 
-	// We don't care where we came from and we know the first arg after that was "clone"
-	args = args[2 .. $];
-
 	// We should have a single argument at this point: the remote URL
 	if (args.length > 2)
 		writeHelp(helpText);

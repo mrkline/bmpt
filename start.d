@@ -25,8 +25,6 @@ void startStory(string[] args)
 		"title|T", &title,
 		"no-checkout|n", &noCheckout);
 
-	args = args[2 .. $];
-
 	if (args.length > 1) {
 		writeHelp(helpText);
 	}

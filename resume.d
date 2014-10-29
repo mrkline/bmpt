@@ -42,8 +42,6 @@ void resumeFromFile(string[] args)
 		"help|h",  function void() { writeHelp(helpText); },
 		"silent|s", &silent);
 
-	args = args[2 .. $];
-
 	if (args.length > 0)
 		writeHelp(helpText);
 
