@@ -76,7 +76,7 @@ BMPT aims to address the concerns listed above by doing the following:
 1. The above design goals call for a fairly different architecture than what is in place now.
    A rewrite will arguably take less time than wrangling the existing code base.
 
-2. The goal of "zero dependencies" throws a wrench on using what we have now, as what we have now leans
+2. The goal of "zero dependencies" throws a wrench in using what we have now, as what we have now leans
    on third-party BPF scripts in Ruby.
 
 3. While I realize that it's important to focus on what you build with your tools and not the tools themselves,
@@ -86,11 +86,8 @@ BMPT aims to address the concerns listed above by doing the following:
 
 ## So what do you have so far?
 
-So far `clone`, `new`, `whoami`, and `share-rerere` are implemented.
-My hope was to crank out a decent proof of concept over the weekend,
-but oddly enough, this is a complex tool and developing it will take longer than I initially expected.
+So far a workable amount of commands (at least for me as a developer),
+including `clone`, `whoami`, `share-rerere`, `checkout`, `start`, `finish`,
+`ongoing`, `test`, `accept`, and `reject` are implemented.
 
-## So... timetable?
-
-I'll continue working on this in my free time and if I have downtime between assignments.
-Soon?
+I'll continue to add commands as I have time, and pull requests are welcome.
