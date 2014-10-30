@@ -7,6 +7,7 @@ import git;
 import ptbranches;
 import pivotal;
 
+/// The entry point for "bmpt test"
 void testStories(string[] args)
 {
 	import std.getopt;

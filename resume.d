@@ -1,3 +1,32 @@
+/**
+ * One of the major design goals of bmpt was to be able to resume
+ * after a manual merge.
+ * This module is how that's accomplished.
+ *
+ * If we need to exit bmpt to let the user handle a manual merge,
+ * modules that need to resume afterwards call registerResume.
+ * Like git does when in the middle of something,
+ * we create a file in the .git directory to indicate
+ * that we're up to something (we call it BMPT_RESUME).
+ * In the file, registerResume writes a line for each module
+ * that needs to be resumed.
+ * It is assumed that the start of each line is that module's key
+ * (see below).
+ *
+ * At the start of bmpt's run, modules that might need to be resume
+ * register themselves with a key using the global resumeHandlers hash map.
+ * (see the static module initializers, i.e. the shared static this() blocks,
+ *  in some other modules.)
+ *
+ * When we call "bmpt resume" (or it is called via a post-commit hook),
+ * resumeFromFile is called.
+ * It goes through the file line by line, grabs the first token of each line,
+ * and uses that to lookup the needed handler from resumeHandlers.
+ * It passes the handler the rest of the line
+ * (tokenized by whitespace since we've already done so anyways),
+ * and it's up to each handler from there.
+ */
+
 import std.exception;
 import std.stdio;
 import std.file;
@@ -10,6 +39,9 @@ shared static void function(string[])[string] resumeHandlers;
 
 private string resumeFile = "/.git/BMPT_RESUME";
 
+/// Thrown when a manual merge is needed.
+/// Modules that need to resume aftewards should catch it,
+/// call registerResume, and rethrow it.
 class ResumeNeededException : Exception
 {
 	this(string message)
@@ -23,13 +55,24 @@ class ResumeNeededException : Exception
 	}
 }
 
-void registerResume(string key)
+/// Writes a line in the resume file for a module.
+void registerResume(string line)
+in
+{
+	auto tokens = line.strip().split();
+	// Pass us something
+	assert(tokens.length > 0);
+	// The first token should be a key from resumeHandlers
+	assert(tokens[0] in resumeHandlers);
+}
+body
 {
 	enforceInRepo();
 	auto fh = File(getRepoRoot() ~ resumeFile, "a");
-	fh.writeln(key);
+	fh.writeln(line);
 }
 
+/// The entry point for "bmpt resume"
 void resumeFromFile(string[] args)
 {
 	import std.getopt;
@@ -42,6 +85,7 @@ void resumeFromFile(string[] args)
 		"help|h",  function void() { writeHelp(helpText); },
 		"silent|s", &silent);
 
+	// We shouldn't have any other params
 	if (args.length > 0)
 		writeHelp(helpText);
 

@@ -16,6 +16,7 @@ void writeWhoami()
 	}
 }
 
+/// The entry point for bmpt whoami
 void writeWhoami(string[] args)
 {
 	import std.getopt;

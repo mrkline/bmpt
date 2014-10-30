@@ -11,6 +11,7 @@ import git;
 import checkout;
 import help;
 
+/// The entry point for "bmpt start"
 void startStory(string[] args)
 {
 	import std.getopt;
@@ -29,6 +30,7 @@ void startStory(string[] args)
 		writeHelp(helpText);
 	}
 	else if (args.length == 0) {
+		// If no ID is passed, just restart this story
 		string storyID = getIDFromCurrentBranch();
 		writeln("Restarting story ", storyID, "...");
 		storyID.start();
@@ -39,6 +41,8 @@ void startStory(string[] args)
 
 	auto story = getStory(storyID);
 
+	// If the story is a feature, demand it be estimated.
+	// This is the behavior from the old BPF tool.
 	if (story["story_type"].str == "feature" && !("estimate" in  story)) {
 		stderr.writeln( "Error: can't start an un-estimated story. "
 			"Please estimate the story in Pivotal Tracker before starting.");
@@ -50,10 +54,13 @@ void startStory(string[] args)
 	if (!noCheckout) {
 		auto storyBranch = getBranchFromID(storyID);
 		if (storyBranch != "") {
+			// If the branch already exists, we have a pretty easy job.
+			// Just check it out.
 			checkoutStory(storyBranch);
 			writeln("Restarting story ", storyID, "...");
 		}
 		else {
+			// Otherwise, we need to create the branch.
 			if (title == "")
 				title = titleFromStoryName(story["name"].str);
 
