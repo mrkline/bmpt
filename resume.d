@@ -85,6 +85,8 @@ void resumeFromFile(string[] args)
 		"help|h",  function void() { writeHelp(helpText); },
 		"silent|s", &silent);
 
+	args = args[2 .. $];
+
 	// We shouldn't have any other params
 	if (args.length > 0)
 		writeHelp(helpText);

@@ -34,13 +34,8 @@ void main(string[] args)
 	if (args.length < 2)
 		writeHelp(helpText);
 
-	string subcommand = args[1];
-
-	// Shave off "bmpt <subcommand>"
-	args = args[2 .. $];
-
 	try {
-		switch(subcommand) {
+		switch(args[1]) {
 			case "version":
 				writeVersion();
 				break;

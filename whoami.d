@@ -25,6 +25,8 @@ void writeWhoami(string[] args)
 		std.getopt.config.caseSensitive,
 		"help|h",  function void() { writeHelp(helpText); });
 
+	args = args[2 .. $];
+
 	if (args.length > 0)
 		writeHelp(helpText);
 
