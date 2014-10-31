@@ -67,20 +67,7 @@ void enforceRerereSetup()
 		"The shared rerere cache has not been set up.");
 }
 
-/// Pulls the rr-cache branch from the remote
-void pullRerere()
-{
-	enforceRerereSetup();
-	string rrPath = getRepoRoot() ~ "/.git/rr-cache";
-	string cwd = getcwd();
-	chdir(rrPath);
-	scope(exit) chdir(cwd);
-	writeln("Pulling the latest conflict resolutions...");
-	run(["git", "pull"]);
-}
-
-/// Commits new rerere resolutions and pushes if there were any
-void pushRerere()
+bool addNewRerereResolutions()
 {
 	import std.regex;
 
@@ -89,7 +76,8 @@ void pushRerere()
 	string cwd = getcwd();
 	chdir(rrPath);
 	scope(exit) chdir(cwd);
-	writeln("Pushing your latest conflict resolutions...");
+
+	writeln("Adding your latest conflict resolutions...");
 
 	// TODO: This follows what the ruby git_bpf gem does,
 	//       but maybe a "git add ." would be simpler.
@@ -109,6 +97,34 @@ void pushRerere()
 		run(["git", "commit", "-m", "Sharing resolution " ~ r.to!string]);
 	}
 
+	return pushNeeded;
+}
+
+
+/// Pulls the rr-cache branch from the remote
+void pullRerere()
+{
+	enforceRerereSetup();
+	string rrPath = getRepoRoot() ~ "/.git/rr-cache";
+	string cwd = getcwd();
+	chdir(rrPath);
+	scope(exit) chdir(cwd);
+	writeln("Pulling the latest conflict resolutions...");
+	run(["git", "pull"]);
+}
+
+/// Commits new rerere resolutions and pushes if there were any
+void pushRerere()
+{
+	// Yeah, we're doing some extra directory changes in here,
+	// but whatever. Those are pretty quick.
+	bool pushNeeded = addNewResolutions();
+
+	enforceRerereSetup();
+	string rrPath = getRepoRoot() ~ "/.git/rr-cache";
+	string cwd = getcwd();
+	chdir(rrPath);
+	scope(exit) chdir(cwd);
 	if (pushNeeded) {
 		writeln("Pushing resolutions...");
 		run(["git", "push"]);

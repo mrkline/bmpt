@@ -38,9 +38,6 @@ void ongoingCommit(string[] args)
 /// using the merge module to share the rerere cache as needed
 void ongoingCommit(string from, string to)
 {
-	writeln("Fetching to make sure branches are as up-to-date as possible...");
-	run(["git", "fetch"], noRedirect);
-
 	writeln("Checking out and fast forwarding ", from, "...");
 	run(["git", "checkout", from]);
 	run(["git", "merge", "--ff-only", getRemote() ~ "/" ~ from]);
