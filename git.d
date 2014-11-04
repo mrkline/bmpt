@@ -73,7 +73,7 @@ string getCurrentBranchName()
 string getRemote()
 {
 	auto output = run(["git", "remote"]).byLine;
-	enforce(output.empty, "There are currently no remotes set up for this repository");
+	enforce(!output.empty, "There are currently no remotes set up for this repository");
 
 	string ret = output.front.strip().idup;
 	// TODO: See if there are multiple remotes and warn as needed?
