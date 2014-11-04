@@ -76,7 +76,7 @@ void pullRerere()
 	chdir(rrPath);
 	scope(exit) chdir(cwd);
 	writeln("Pulling the latest conflict resolutions...");
-	run(["git", "pull"]);
+	run(["git", "pull"], noRedirect);
 }
 
 /// Commits new rerere resolutions and pushes if there were any
