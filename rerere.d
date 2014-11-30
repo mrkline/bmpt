@@ -91,22 +91,38 @@ void pushRerere()
 	scope(exit) chdir(cwd);
 	writeln("Pushing your latest conflict resolutions...");
 
-	// TODO: This follows what the ruby git_bpf gem does,
-	//       but maybe a "git add ." would be simpler.
-	enum newResolutionRegex = ctRegex!(`\?\?\s(\w+)`);
+	enum newResolutionRegex = ctRegex!(`(.{2})\s(\w+)`);
 
 	auto newResolutions = run(["git", "status", "--porcelain"])
 		.byLine
 		.map!(s => s.matchFirst(newResolutionRegex))
-		.filter!(m => m.to!bool) // Regex matches are converible to booleans if found
-		.map!(m => m[1]); // The first match is the directory of the resolution
+		.filter!(m => m.to!bool); // Regex matches are converible to booleans if found
 
 	bool pushNeeded = !newResolutions.empty;
 
-	foreach (r; newResolutions) {
-		writeln("Sharing resolution ", r, "...");
-		run(["git", "add", r.to!string]);
-		run(["git", "commit", "-m", "Sharing resolution " ~ r.to!string]);
+	foreach (m; newResolutions) {
+		string statusCode = m[0].to!string;
+		string resolution = m[1].to!string;
+
+		string action;
+		// See http://git-scm.com/docs/git-status for how
+		// the --porcelain status codes work.
+		switch(statusCode[1]) {
+			case 'M':
+				action = "Modifying";
+				break;
+
+			case 'D':
+				action = "Removing";
+				break;
+
+			default:
+				action = "Adding";
+		}
+
+		writeln(action, " resolution ", resolution, "...");
+		run(["git", "add", resolution]);
+		run(["git", "commit", "-m", "Sharing resolution " ~ resolution]);
 	}
 
 	if (pushNeeded) {
