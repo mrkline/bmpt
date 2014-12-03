@@ -3,6 +3,7 @@ import std.algorithm;
 import std.ascii;
 import std.utf;
 import std.array;
+import std.range;
 
 import pivotal;
 import ptbranches;
@@ -45,7 +46,7 @@ void startStory(string[] args)
 
 	// If the story is a feature, demand it be estimated.
 	// This is the behavior from the old BPF tool.
-	if (story["story_type"].str == "feature" && !("estimate" in  story)) {
+	if (story["story_type"].str == "feature" && !("estimate" in story)) {
 		stderr.writeln( "Error: can't start an un-estimated story. "
 			"Please estimate the story in Pivotal Tracker before starting.");
 		exit(1);
@@ -106,6 +107,7 @@ string titleFromStoryName(string name)
 		.toUTF8() // TODO: Why does .array expand the range into a UTF-32 array?
 		.split() // Split into words
 		.filter!(w => !forbiddenWords.canFind(w)) // Remove forbidden words
+		.take(5) // Take the first five words
 		.join("_");
 
 }
