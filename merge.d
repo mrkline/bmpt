@@ -29,7 +29,7 @@ void mergeBranch(string branch)
 {
 
 	writeln("Attempting to merge ", branch, " into ", getCurrentBranchName(), ".");
-	auto pipes = pipeProcess(["git", "merge", branch], stderrToStdout);
+	auto pipes = pipeProcess(["git", "merge", "--no-ff", branch], stderrToStdout);
 	if (wait(pipes.pid) != 0 && !pipes.stdout.byLine.filter!(s => s.canFind("CONFLICT")).empty()) {
 		writeln("An automatic merge failed.");
 		writeln("Resolve it manually and bmpt will resume when you commit the merge.");
