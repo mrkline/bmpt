@@ -101,8 +101,8 @@ void pushRerere()
 	bool pushNeeded = !newResolutions.empty;
 
 	foreach (m; newResolutions) {
-		string statusCode = m[0].to!string;
-		string resolution = m[1].to!string;
+		string statusCode = m[1].to!string;
+		string resolution = m[2].to!string;
 
 		string action;
 		// See http://git-scm.com/docs/git-status for how
